@@ -44,6 +44,10 @@ final class AudioEngine {
         await refreshActiveApps()
     }
 
+    func tapSessionStarted(for app: AudioApp) -> Bool {
+        tapManager?.hasSession(for: app.id) ?? false
+    }
+
     func updateVolume(for app: AudioApp, volume: Float) {
         logger.info("Volume request for \(app.displayName, privacy: .public) PID \(app.id): \(volume, privacy: .public)")
         guard app.controlAvailable else {

@@ -88,3 +88,29 @@ Nocturn currently delivers:
 - real detection + real control attempts,
 - but **not universal guaranteed per-app control on all runtimes/apps**.
 
+## Manual Live Test Procedure
+
+Use one known audio source app (Spotify, Music, or a browser tab playing audio).
+
+1. Launch Nocturn and open the popover.
+2. Open `Settings` and enable `Diagnostics Mode`.
+3. Click `Refresh Audio Apps`.
+4. In `Live Diagnostics`, find your source app and verify:
+   - `PID` is present
+   - `tapSessionStarted: true`
+   - `controlAvailable: true`
+   - `reason: none`
+5. Go back to the app row in the popover:
+   - move the volume slider
+   - toggle mute
+6. Confirm success indicators:
+   - UI diagnostics remain `tapSessionStarted: true` and `controlAvailable: true`
+   - audio behavior changes audibly for that app
+   - logs show apply attempts (`Applied volume ...`, `Applied mute ...`)
+
+Failure indicators:
+
+- `tapSessionStarted: false` or `controlAvailable: false`
+- non-empty `reason`
+- logs show skipped apply attempts due to unavailable control/session
+
