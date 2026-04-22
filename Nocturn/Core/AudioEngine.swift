@@ -22,6 +22,7 @@ final class AudioEngine {
     init(deviceManager: DeviceManager = DeviceManager(), tapManager: AudioTapManager? = nil) {
         self.deviceManager = deviceManager
         self.tapManager = tapManager
+        self.tapAvailable = tapManager?.isTapAvailable ?? false
         startPolling()
         observeTerminations()
     }
@@ -35,6 +36,7 @@ final class AudioEngine {
 
     func attachTapManager(_ manager: AudioTapManager) {
         tapManager = manager
+        tapAvailable = manager.isTapAvailable
     }
 
     func refreshNow() async {
@@ -202,6 +204,20 @@ final class AudioEngine {
         let payload = EQStatePayload(preset: app.eqPreset, bands: app.eqBands)
         if let data = try? JSONEncoder().encode(payload) {
             defaults.set(data, forKey: "nocturn.eq.\(app.bundleID)")
+        }
+
+        // Also persist richer EQ/device state through SwiftData.
+        let bundleID = app.bundleID
+        let preset = app.eqPreset
+        let bands = app.eqBands
+        let outputDeviceUID = app.outputDeviceUID
+        Task { @MainActor in
+            NocturnDataStore.upsert(
+                bundleID: bundleID,
+                preset: preset,
+                bands: bands,
+                outputDeviceUID: outputDeviceUID
+            )
         }
     }
 
