@@ -73,7 +73,17 @@ struct MenuBarView: View {
 
     @ViewBuilder
     private var permissionBanner: some View {
-        if audioEngine.microphonePermissionDenied {
+        if !audioEngine.tapAvailable {
+            HStack(spacing: 8) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.yellow)
+                Text("AudioTap controls are unavailable on this macOS/runtime.")
+                    .font(.caption)
+                Spacer()
+            }
+            .padding(8)
+            .background(RoundedRectangle(cornerRadius: 8).fill(Color.yellow.opacity(0.15)))
+        } else if audioEngine.microphonePermissionDenied {
             HStack(spacing: 8) {
                 Image(systemName: "mic.slash.fill")
                     .foregroundStyle(.orange)

@@ -7,6 +7,7 @@ struct AppRowView: View {
     let defaultDevice: AudioDevice?
 
     @State private var isExpanded = false
+    private var controlsAvailable: Bool { audioEngine.tapAvailable }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -23,7 +24,9 @@ struct AppRowView: View {
                                 .foregroundStyle(.secondary)
                         }
                         Spacer()
-                        DevicePickerView(app: app, devices: devices, defaultDevice: defaultDevice)
+                        if controlsAvailable {
+                            DevicePickerView(app: app, devices: devices, defaultDevice: defaultDevice)
+                        }
                     }
 
                     VolumeSlider(
@@ -36,15 +39,25 @@ struct AppRowView: View {
                         onToggleBoost: { audioEngine.setBoostEnabled(for: app, enabled: !app.isBoostEnabled) }
                     )
                     .opacity(app.isMuted ? 0.4 : 1.0)
+                    .disabled(!controlsAvailable)
+
+                    if !controlsAvailable {
+                        Text("AudioTap unavailable on this macOS/runtime; controls are disabled.")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
                 }
 
                 Button {
-                    audioEngine.updateMute(for: app, muted: !app.isMuted)
+                    if controlsAvailable {
+                        audioEngine.updateMute(for: app, muted: !app.isMuted)
+                    }
                 } label: {
                     Image(systemName: app.isMuted ? "speaker.slash.fill" : "speaker.fill")
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(app.isMuted ? .orange : .secondary)
+                .disabled(!controlsAvailable)
             }
             .contentShape(Rectangle())
             .onTapGesture {
@@ -53,7 +66,7 @@ struct AppRowView: View {
                 }
             }
 
-            if isExpanded {
+            if isExpanded, controlsAvailable {
                 EffectsView(app: app)
                     .transition(.opacity.combined(with: .move(edge: .top)))
             }
