@@ -35,35 +35,6 @@ targets:
         CODE_SIGN_ENTITLEMENTS: Nocturn/Nocturn.entitlements
         GENERATE_INFOPLIST_FILE: NO
         ENABLE_HARDENED_RUNTIME: YES
-    dependencies:
-      - target: NocturnDriver
-        embed: true
-        copy:
-          destination: plugins
-
-  NocturnDriver:
-    type: bundle
-    platform: macOS
-    deploymentTarget: "14.0"
-    sources:
-      - path: Nocturn/Driver
-        includes:
-          - "NocturnDriver.h"
-          - "NocturnDriver.mm"
-          - "NocturnDevice.h"
-          - "NocturnDevice.mm"
-    settings:
-      base:
-        PRODUCT_NAME: NocturnDriver
-        PRODUCT_BUNDLE_IDENTIFIER: com.aymandakir.nocturn.driver
-        INFOPLIST_FILE: NocturnDriver/NocturnDriver-Info.plist
-        WRAPPER_EXTENSION: driver
-        GENERATE_INFOPLIST_FILE: NO
-        CLANG_ENABLE_OBJC_ARC: YES
-        CLANG_CXX_LANGUAGE_STANDARD: "gnu++17"
-        GCC_ENABLE_CPP_EXCEPTIONS: YES
-        GCC_ENABLE_CPP_RTTI: YES
-        MACH_O_TYPE: mh_bundle
 
   NocturnTests:
     type: bundle.unit-test
@@ -84,7 +55,6 @@ schemes:
     build:
       targets:
         Nocturn: all
-        NocturnDriver: all
         NocturnTests: [test]
     run:
       config: Debug

@@ -2,7 +2,6 @@ import AVFoundation
 import CoreAudio
 import Foundation
 import Observation
-import SwiftUI
 
 /// Manages per-process audio taps on macOS 14.2+ via `CATapDescription` and an
 /// aggregate device that exposes the captured audio to `AVAudioEngine`.
@@ -10,7 +9,7 @@ import SwiftUI
 /// Each active `AudioApp` gets its own `TapSession`, which owns:
 /// - a process tap (`AudioHardwareCreateProcessTap`)
 /// - a private aggregate device containing that tap as a sub-tap
-/// - an `AVAudioEngine` subgraph: aggregate input → EQ → mixer → output device
+/// - an `AVAudioEngine` subgraph: aggregate input → mixer → system output
 ///
 /// SAFETY NOTE:
 /// v0.1.0 intentionally prioritizes "no duplicate audio" over perfect per-app
@@ -20,13 +19,10 @@ import SwiftUI
 @Observable
 final class AudioTapManager {
     struct TapSession {
-        var processObjectID: AudioObjectID
         var tapID: AudioObjectID
         var aggregateID: AudioObjectID
         let engine: AVAudioEngine
-        let equalizer: AVAudioUnitEQ
         let mixer: AVAudioMixerNode
-        var outputDeviceUID: String?
     }
 
     private(set) var sessions: [pid_t: TapSession] = [:]
@@ -51,7 +47,7 @@ final class AudioTapManager {
             if session.aggregateID != kAudioObjectUnknown {
                 _ = AudioHardwareDestroyAggregateDevice(session.aggregateID)
             }
-            if session.tapID != kAudioObjectUnknown {
+            if #available(macOS 14.2, *), session.tapID != kAudioObjectUnknown {
                 _ = AudioHardwareDestroyProcessTap(session.tapID)
             }
         }
@@ -75,36 +71,25 @@ final class AudioTapManager {
         }
 
         let engine = AVAudioEngine()
-        let equalizer = AVAudioUnitEQ(numberOfBands: 5)
         let mixer = AVAudioMixerNode()
-        engine.attach(equalizer)
         engine.attach(mixer)
 
         try configureInputUnit(engine: engine, deviceID: aggregateID)
 
         let inputFormat = engine.inputNode.outputFormat(forBus: 0)
-        engine.connect(engine.inputNode, to: equalizer, format: inputFormat)
-        engine.connect(equalizer, to: mixer, format: inputFormat)
+        engine.connect(engine.inputNode, to: mixer, format: inputFormat)
         engine.connect(mixer, to: engine.mainMixerNode, format: inputFormat)
 
-        var session = TapSession(
-            processObjectID: processObjectID,
+        let session = TapSession(
             tapID: tapID,
             aggregateID: aggregateID,
             engine: engine,
-            equalizer: equalizer,
-            mixer: mixer,
-            outputDeviceUID: app.outputDeviceUID
+            mixer: mixer
         )
         sessions[app.id] = session
 
-        EffectsChain.configure(equalizer: equalizer, bands: app.eqBands)
         setVolume(app.volume, for: app)
         setMuted(app.isMuted, for: app)
-        if let uid = app.outputDeviceUID {
-            try? applyOutputDevice(uid, to: &session)
-            sessions[app.id] = session
-        }
 
         do {
             try engine.start()
@@ -135,31 +120,15 @@ final class AudioTapManager {
 
     /// Sets linear app volume in range 0.0...1.5.
     func setVolume(_ volume: Float, for app: AudioApp) {
-        guard var session = sessions[app.id] else { return }
+        guard let session = sessions[app.id] else { return }
         let normalized = min(max(volume, 0), 1.5)
         session.mixer.outputVolume = app.isMuted ? 0 : normalized
-        sessions[app.id] = session
     }
 
     /// Enables or disables app audio without altering the stored volume.
     func setMuted(_ muted: Bool, for app: AudioApp) {
-        guard var session = sessions[app.id] else { return }
-        session.mixer.outputVolume = muted ? 0 : min(max(app.volume, 0), 1.5)
-        sessions[app.id] = session
-    }
-
-    /// Updates the 5-band equalizer gains in dB.
-    func setEQBands(_ bands: [Float], for app: AudioApp) {
         guard let session = sessions[app.id] else { return }
-        EffectsChain.configure(equalizer: session.equalizer, bands: bands)
-    }
-
-    /// Routes app output to a specific output device UID.
-    func setOutputDevice(_ deviceUID: String, for app: AudioApp) async throws {
-        guard var session = sessions[app.id] else { return }
-        // TODO(v0.2.0/HAL): guarantee strict per-app route isolation.
-        try applyOutputDevice(deviceUID, to: &session)
-        sessions[app.id] = session
+        session.mixer.outputVolume = muted ? 0 : min(max(app.volume, 0), 1.5)
     }
 
     private func teardown(_ session: TapSession) {
@@ -169,7 +138,7 @@ final class AudioTapManager {
         if session.aggregateID != kAudioObjectUnknown {
             _ = AudioHardwareDestroyAggregateDevice(session.aggregateID)
         }
-        if session.tapID != kAudioObjectUnknown {
+        if #available(macOS 14.2, *), session.tapID != kAudioObjectUnknown {
             _ = AudioHardwareDestroyProcessTap(session.tapID)
         }
     }
@@ -256,46 +225,6 @@ final class AudioTapManager {
         }
     }
 
-    private func applyOutputDevice(_ uid: String, to session: inout TapSession) throws {
-        session.outputDeviceUID = uid
-        guard
-            let deviceID = lookupDeviceID(forUID: uid),
-            let outputUnit = session.engine.outputNode.audioUnit
-        else {
-            return
-        }
-        var device = deviceID
-        let status = AudioUnitSetProperty(
-            outputUnit,
-            kAudioOutputUnitProperty_CurrentDevice,
-            kAudioUnitScope_Global,
-            0,
-            &device,
-            UInt32(MemoryLayout.size(ofValue: device))
-        )
-        guard status == noErr else {
-            throw AudioError.propertyWriteFailed(status)
-        }
-    }
-
-    private func lookupDeviceID(forUID uid: String) -> AudioDeviceID? {
-        guard
-            let ids: [AudioDeviceID] = try? getPropertyDataArray(
-                AudioObjectID(kAudioObjectSystemObject),
-                address: CoreAudioProperty.devices,
-                elementType: AudioDeviceID.self
-            )
-        else { return nil }
-
-        for id in ids {
-            if let candidate = try? getCFStringProperty(id, selector: kAudioDevicePropertyDeviceUID),
-               candidate == uid {
-                return id
-            }
-        }
-        return nil
-    }
-
     private func getCFStringProperty(
         _ objectID: AudioObjectID,
         selector: AudioObjectPropertySelector
@@ -312,16 +241,5 @@ final class AudioTapManager {
             throw AudioError.propertyReadFailed(status)
         }
         return value as String
-    }
-}
-
-private struct AudioTapManagerKey: EnvironmentKey {
-    static var defaultValue: AudioTapManager = AudioTapManager()
-}
-
-extension EnvironmentValues {
-    var audioTapManager: AudioTapManager {
-        get { self[AudioTapManagerKey.self] }
-        set { self[AudioTapManagerKey.self] = newValue }
     }
 }

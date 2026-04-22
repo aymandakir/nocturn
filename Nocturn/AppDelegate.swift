@@ -2,6 +2,7 @@ import AppKit
 import Carbon.HIToolbox
 import SwiftUI
 
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let logger = AppLogger.app
     private var statusItem: NSStatusItem?
@@ -55,7 +56,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         popover.behavior = .transient
         let rootView = MenuBarView()
             .environment(\.audioEngine, audioEngine)
-            .environment(\.audioTapManager, audioTapManager)
         popover.contentViewController = NSHostingController(rootView: rootView)
     }
 

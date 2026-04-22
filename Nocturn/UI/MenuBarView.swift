@@ -62,9 +62,7 @@ struct MenuBarView: View {
                     get: { audioEngine.deviceManager.globalOutputVolume },
                     set: { audioEngine.deviceManager.setGlobalOutputVolume($0) }
                 ),
-                isMuted: false,
-                boostEnabled: false,
-                onToggleBoost: {}
+                isMuted: false
             )
         }
     }

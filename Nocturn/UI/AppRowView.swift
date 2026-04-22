@@ -20,9 +20,7 @@ struct AppRowView: View {
                             get: { app.volume },
                             set: { audioEngine.updateVolume(for: app, volume: $0) }
                         ),
-                        isMuted: app.isMuted,
-                        boostEnabled: false,
-                        onToggleBoost: {}
+                        isMuted: app.isMuted
                     )
                     .opacity(app.isMuted ? 0.4 : 1.0)
                 } else {

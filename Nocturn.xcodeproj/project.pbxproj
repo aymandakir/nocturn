@@ -7,36 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		264D63DDA201BE52A7182F40 /* NocturnDriver.mm in Sources */ = {isa = PBXBuildFile; fileRef = E093119E10A51B749A049B06 /* NocturnDriver.mm */; };
 		2B7C0CFB3D8081FEDEF7F449 /* VolumeSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3EC0F308622185AF6D82FB /* VolumeSlider.swift */; };
 		33F4E325EEC37DF0345C8870 /* VolumeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3EF22D3919EC417846086F /* VolumeTests.swift */; };
 		35964E073E0E666F26EA3638 /* AppIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9B95A69FBCEC3027E64CB9E /* AppIconView.swift */; };
-		37DA73BB9984FDEE27559E5A /* DevicePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E9A43C545CFCEE96F73256 /* DevicePickerView.swift */; };
 		43A75E0E183F6824CD1542F2 /* AudioTapManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2119D43B47701AE1E0793F70 /* AudioTapManager.swift */; };
 		4496B0568ADCE08406F2819E /* NocturnApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AC9C7E20826CA6A8155DBC2 /* NocturnApp.swift */; };
 		4C9B914A04DC1AAE13C4E785 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42CC0B0D9AB54FF7507C6AA3 /* MenuBarView.swift */; };
 		50345475991CCE4986BE82A6 /* AudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD50C96D13C301A75240F2ED /* AudioEngine.swift */; };
-		60A90EDE1BB4F7D66A913193 /* NocturnDriverXPCProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B5209B987F17AEB57FADEFD /* NocturnDriverXPCProtocol.swift */; };
-		651E13C73091E39E8068A5D7 /* NocturnDriver.bundle in Embed Dependencies */ = {isa = PBXBuildFile; fileRef = 75DEAFAE402A4002752FA38A /* NocturnDriver.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6C3C35EEF1EA923A4DEBAD5E /* EQPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829D8FEECBFFE2DFEE65B458 /* EQPreset.swift */; };
 		6D1A5D0C1A395E68081A5064 /* AudioApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5BF0087F7078810ECEE9C3 /* AudioApp.swift */; };
 		6E48F0A86D2E4C8B205F7F0C /* DeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B9C490A35117AA3D4350023 /* DeviceManager.swift */; };
 		6EA43DBEEEDE78F44A84B77D /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501C2E09FC5512CCE215AE54 /* AppLogger.swift */; };
 		820CF670FC885637600ABBFF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A1D1051FEA7EBF53CC6EC5 /* SettingsView.swift */; };
 		8A27240B4D544A5B4929C714 /* AudioAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A9992112FDE1EAD073E470 /* AudioAppTests.swift */; };
-		8DB9192666B0A84F47079BC8 /* EffectsChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81B99F7B0D786085E764A22B /* EffectsChain.swift */; };
 		920E2DD46E6856DA27C4A479 /* AppRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD54105C554B778E1A5FCD0F /* AppRowView.swift */; };
-		9A4D1FECD4DA1FDF23C1C20A /* StoredEQPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41884F4F0105F618EA9C50E2 /* StoredEQPreset.swift */; };
-		9AB85E9F904DC4D7FAC89A60 /* AppAudioSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = AED25AE218C12A126547EB75 /* AppAudioSession.swift */; };
 		AD30CD2ACEAA71A43F20390F /* AudioDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32E7998F8C41FFAB4662A793 /* AudioDevice.swift */; };
 		B1FEA2A20954E8F6341E2461 /* AudioError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74B085ADD598BA1902D332DA /* AudioError.swift */; };
 		BA45945D29B641DC50B301C1 /* CoreAudioExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3107224DFE264626BE23F924 /* CoreAudioExtensions.swift */; };
 		BBF66534E0404B2227599EDB /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A852F9E3C553B00AA621D85C /* Permissions.swift */; };
 		CBF738BEA11538DDE2EA11C3 /* DeviceIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 262A573039ED0234BFB11996 /* DeviceIconView.swift */; };
-		D7CDC3104B970DEBB843D3FB /* EffectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED88B66AECC637146C816ED /* EffectsView.swift */; };
 		E017B8246A2D20BCBE389F20 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7730D80B6E848D884D9DA24 /* AppDelegate.swift */; };
 		EA887F1000397D81A71067E6 /* DeviceManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3F65D152A0CDF85E8AFE74 /* DeviceManagerTests.swift */; };
-		ED156055DD6386B1E093404A /* NocturnDevice.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3B9FF877A06EFDB19CF213B7 /* NocturnDevice.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,60 +37,27 @@
 			remoteGlobalIDString = BDDC4130E1792F9055F83E90;
 			remoteInfo = Nocturn;
 		};
-		4960A04BB620F1C6A21780B1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 49A3D95E0BF0378F7C1648DD /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BBB79C39763D8F30F7CF63CE;
-			remoteInfo = NocturnDriver;
-		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		399AAF68CEC729F87B5FD7F1 /* Embed Dependencies */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				651E13C73091E39E8068A5D7 /* NocturnDriver.bundle in Embed Dependencies */,
-			);
-			name = "Embed Dependencies";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2119D43B47701AE1E0793F70 /* AudioTapManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTapManager.swift; sourceTree = "<group>"; };
 		262A573039ED0234BFB11996 /* DeviceIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceIconView.swift; sourceTree = "<group>"; };
-		2B5209B987F17AEB57FADEFD /* NocturnDriverXPCProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NocturnDriverXPCProtocol.swift; sourceTree = "<group>"; };
 		3107224DFE264626BE23F924 /* CoreAudioExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreAudioExtensions.swift; sourceTree = "<group>"; };
 		32E7998F8C41FFAB4662A793 /* AudioDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioDevice.swift; sourceTree = "<group>"; };
-		34E9A43C545CFCEE96F73256 /* DevicePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePickerView.swift; sourceTree = "<group>"; };
-		3B9FF877A06EFDB19CF213B7 /* NocturnDevice.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NocturnDevice.mm; sourceTree = "<group>"; };
-		41884F4F0105F618EA9C50E2 /* StoredEQPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredEQPreset.swift; sourceTree = "<group>"; };
 		42CC0B0D9AB54FF7507C6AA3 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
 		4F3EF22D3919EC417846086F /* VolumeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeTests.swift; sourceTree = "<group>"; };
 		501C2E09FC5512CCE215AE54 /* AppLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogger.swift; sourceTree = "<group>"; };
-		69CB2193179DF460EDB67234 /* NocturnDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NocturnDriver.h; sourceTree = "<group>"; };
 		6AC9C7E20826CA6A8155DBC2 /* NocturnApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NocturnApp.swift; sourceTree = "<group>"; };
 		6B9C490A35117AA3D4350023 /* DeviceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceManager.swift; sourceTree = "<group>"; };
 		711688D4CDBC25A0206D5603 /* NocturnTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NocturnTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		74B085ADD598BA1902D332DA /* AudioError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioError.swift; sourceTree = "<group>"; };
-		75DEAFAE402A4002752FA38A /* NocturnDriver.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NocturnDriver.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		76F831F25DA01F6B4FA7DFF2 /* NocturnDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NocturnDevice.h; sourceTree = "<group>"; };
-		7ED88B66AECC637146C816ED /* EffectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectsView.swift; sourceTree = "<group>"; };
-		81B99F7B0D786085E764A22B /* EffectsChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectsChain.swift; sourceTree = "<group>"; };
-		829D8FEECBFFE2DFEE65B458 /* EQPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EQPreset.swift; sourceTree = "<group>"; };
 		9A5BF0087F7078810ECEE9C3 /* AudioApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioApp.swift; sourceTree = "<group>"; };
 		A852F9E3C553B00AA621D85C /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
 		AA3EC0F308622185AF6D82FB /* VolumeSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeSlider.swift; sourceTree = "<group>"; };
-		AED25AE218C12A126547EB75 /* AppAudioSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAudioSession.swift; sourceTree = "<group>"; };
 		B9B95A69FBCEC3027E64CB9E /* AppIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconView.swift; sourceTree = "<group>"; };
 		BD50C96D13C301A75240F2ED /* AudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEngine.swift; sourceTree = "<group>"; };
 		C1A1D1051FEA7EBF53CC6EC5 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		D2FB6033BE712CA8D4FFCBE4 /* Nocturn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nocturn.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		E093119E10A51B749A049B06 /* NocturnDriver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NocturnDriver.mm; sourceTree = "<group>"; };
 		E3A9992112FDE1EAD073E470 /* AudioAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAppTests.swift; sourceTree = "<group>"; };
 		EE3F65D152A0CDF85E8AFE74 /* DeviceManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceManagerTests.swift; sourceTree = "<group>"; };
 		F7730D80B6E848D884D9DA24 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -122,7 +79,6 @@
 			isa = PBXGroup;
 			children = (
 				D2FB6033BE712CA8D4FFCBE4 /* Nocturn.app */,
-				75DEAFAE402A4002752FA38A /* NocturnDriver.bundle */,
 				711688D4CDBC25A0206D5603 /* NocturnTests.xctest */,
 			);
 			name = Products;
@@ -142,8 +98,6 @@
 			isa = PBXGroup;
 			children = (
 				FD54105C554B778E1A5FCD0F /* AppRowView.swift */,
-				34E9A43C545CFCEE96F73256 /* DevicePickerView.swift */,
-				7ED88B66AECC637146C816ED /* EffectsView.swift */,
 				42CC0B0D9AB54FF7507C6AA3 /* MenuBarView.swift */,
 				C1A1D1051FEA7EBF53CC6EC5 /* SettingsView.swift */,
 				CB42C353DCE1FE786A8D8121 /* Components */,
@@ -151,26 +105,12 @@
 			path = UI;
 			sourceTree = "<group>";
 		};
-		52791B23BA57B3167306CB5A /* Driver */ = {
-			isa = PBXGroup;
-			children = (
-				76F831F25DA01F6B4FA7DFF2 /* NocturnDevice.h */,
-				3B9FF877A06EFDB19CF213B7 /* NocturnDevice.mm */,
-				69CB2193179DF460EDB67234 /* NocturnDriver.h */,
-				E093119E10A51B749A049B06 /* NocturnDriver.mm */,
-				2B5209B987F17AEB57FADEFD /* NocturnDriverXPCProtocol.swift */,
-			);
-			path = Driver;
-			sourceTree = "<group>";
-		};
 		5C37B8F17F19936C51EF8BDB /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				AED25AE218C12A126547EB75 /* AppAudioSession.swift */,
 				BD50C96D13C301A75240F2ED /* AudioEngine.swift */,
 				2119D43B47701AE1E0793F70 /* AudioTapManager.swift */,
 				6B9C490A35117AA3D4350023 /* DeviceManager.swift */,
-				81B99F7B0D786085E764A22B /* EffectsChain.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -200,7 +140,6 @@
 				F7730D80B6E848D884D9DA24 /* AppDelegate.swift */,
 				6AC9C7E20826CA6A8155DBC2 /* NocturnApp.swift */,
 				5C37B8F17F19936C51EF8BDB /* Core */,
-				52791B23BA57B3167306CB5A /* Driver */,
 				F1BE9279425A716EA8173443 /* Models */,
 				4FBB97554FE6AA531A4EDC55 /* UI */,
 				04051CF200FE8C208A0B2736 /* Utilities */,
@@ -214,8 +153,6 @@
 				9A5BF0087F7078810ECEE9C3 /* AudioApp.swift */,
 				32E7998F8C41FFAB4662A793 /* AudioDevice.swift */,
 				74B085ADD598BA1902D332DA /* AudioError.swift */,
-				829D8FEECBFFE2DFEE65B458 /* EQPreset.swift */,
-				41884F4F0105F618EA9C50E2 /* StoredEQPreset.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -223,34 +160,15 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		BBB79C39763D8F30F7CF63CE /* NocturnDriver */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BDBE325FBA87CC3ED9370689 /* Build configuration list for PBXNativeTarget "NocturnDriver" */;
-			buildPhases = (
-				162D458092383A83F6694B17 /* Sources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = NocturnDriver;
-			packageProductDependencies = (
-			);
-			productName = NocturnDriver;
-			productReference = 75DEAFAE402A4002752FA38A /* NocturnDriver.bundle */;
-			productType = "com.apple.product-type.bundle";
-		};
 		BDDC4130E1792F9055F83E90 /* Nocturn */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 84B46AC86A87113E490BDE3E /* Build configuration list for PBXNativeTarget "Nocturn" */;
 			buildPhases = (
 				41A4E8E0D384E95A2CD25C02 /* Sources */,
-				399AAF68CEC729F87B5FD7F1 /* Embed Dependencies */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				9F8AEB960D224314719CF01E /* PBXTargetDependency */,
 			);
 			name = Nocturn;
 			packageProductDependencies = (
@@ -286,9 +204,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
-					BBB79C39763D8F30F7CF63CE = {
-						ProvisioningStyle = Automatic;
-					};
 					BDDC4130E1792F9055F83E90 = {
 						ProvisioningStyle = Automatic;
 					};
@@ -312,27 +227,16 @@
 			projectRoot = "";
 			targets = (
 				BDDC4130E1792F9055F83E90 /* Nocturn */,
-				BBB79C39763D8F30F7CF63CE /* NocturnDriver */,
 				DFF0EEFF243F4D6B6CE8C88C /* NocturnTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		162D458092383A83F6694B17 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				ED156055DD6386B1E093404A /* NocturnDevice.mm in Sources */,
-				264D63DDA201BE52A7182F40 /* NocturnDriver.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		41A4E8E0D384E95A2CD25C02 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9AB85E9F904DC4D7FAC89A60 /* AppAudioSession.swift in Sources */,
 				E017B8246A2D20BCBE389F20 /* AppDelegate.swift in Sources */,
 				35964E073E0E666F26EA3638 /* AppIconView.swift in Sources */,
 				6EA43DBEEEDE78F44A84B77D /* AppLogger.swift in Sources */,
@@ -345,16 +249,10 @@
 				BA45945D29B641DC50B301C1 /* CoreAudioExtensions.swift in Sources */,
 				CBF738BEA11538DDE2EA11C3 /* DeviceIconView.swift in Sources */,
 				6E48F0A86D2E4C8B205F7F0C /* DeviceManager.swift in Sources */,
-				37DA73BB9984FDEE27559E5A /* DevicePickerView.swift in Sources */,
-				6C3C35EEF1EA923A4DEBAD5E /* EQPreset.swift in Sources */,
-				8DB9192666B0A84F47079BC8 /* EffectsChain.swift in Sources */,
-				D7CDC3104B970DEBB843D3FB /* EffectsView.swift in Sources */,
 				4C9B914A04DC1AAE13C4E785 /* MenuBarView.swift in Sources */,
 				4496B0568ADCE08406F2819E /* NocturnApp.swift in Sources */,
-				60A90EDE1BB4F7D66A913193 /* NocturnDriverXPCProtocol.swift in Sources */,
 				BBF66534E0404B2227599EDB /* Permissions.swift in Sources */,
 				820CF670FC885637600ABBFF /* SettingsView.swift in Sources */,
-				9A4D1FECD4DA1FDF23C1C20A /* StoredEQPreset.swift in Sources */,
 				2B7C0CFB3D8081FEDEF7F449 /* VolumeSlider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -376,11 +274,6 @@
 			isa = PBXTargetDependency;
 			target = BDDC4130E1792F9055F83E90 /* Nocturn */;
 			targetProxy = 447AFA86EF63DCD07A40760C /* PBXContainerItemProxy */;
-		};
-		9F8AEB960D224314719CF01E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BBB79C39763D8F30F7CF63CE /* NocturnDriver */;
-			targetProxy = 4960A04BB620F1C6A21780B1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -464,29 +357,6 @@
 				SWIFT_VERSION = 5.1;
 			};
 			name = Release;
-		};
-		1C29EF54C19670DDA28F4FF2 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "NocturnDriver/NocturnDriver-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				MACH_O_TYPE = mh_bundle;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.aymandakir.nocturn.driver;
-				PRODUCT_NAME = NocturnDriver;
-				SDKROOT = macosx;
-				WRAPPER_EXTENSION = driver;
-			};
-			name = Debug;
 		};
 		4B6B940BE40442C45AC77CFF /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -611,29 +481,6 @@
 			};
 			name = Debug;
 		};
-		F0ACBAF4ED0B8008875E0BAF /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "NocturnDriver/NocturnDriver-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				MACH_O_TYPE = mh_bundle;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.aymandakir.nocturn.driver;
-				PRODUCT_NAME = NocturnDriver;
-				SDKROOT = macosx;
-				WRAPPER_EXTENSION = driver;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -660,15 +507,6 @@
 			buildConfigurations = (
 				D65A38447F236841415F01D3 /* Debug */,
 				150BC79441A6A429963CCDEE /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		BDBE325FBA87CC3ED9370689 /* Build configuration list for PBXNativeTarget "NocturnDriver" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1C29EF54C19670DDA28F4FF2 /* Debug */,
-				F0ACBAF4ED0B8008875E0BAF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

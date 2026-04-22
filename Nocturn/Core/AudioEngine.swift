@@ -44,8 +44,7 @@ final class AudioEngine {
     }
 
     func updateVolume(for app: AudioApp, volume: Float) {
-        let maxValue: Float = app.isBoostEnabled ? 1.5 : 1.0
-        app.volume = min(max(volume, 0), maxValue)
+        app.volume = min(max(volume, 0), 1.0)
         tapManager?.setVolume(app.volume, for: app)
         persistState(for: app)
     }
@@ -53,39 +52,6 @@ final class AudioEngine {
     func updateMute(for app: AudioApp, muted: Bool) {
         app.isMuted = muted
         tapManager?.setMuted(muted, for: app)
-        persistState(for: app)
-    }
-
-    func updateEQPreset(for app: AudioApp, preset: EQPreset) {
-        app.eqPreset = preset
-        if preset != .custom {
-            app.eqBands = preset.bands
-        }
-        tapManager?.setEQBands(app.eqBands, for: app)
-        persistState(for: app)
-    }
-
-    func updateEQBands(for app: AudioApp, bands: [Float]) {
-        app.eqBands = bands
-        app.eqPreset = .custom
-        tapManager?.setEQBands(bands, for: app)
-        persistState(for: app)
-    }
-
-    func updateOutputDevice(for app: AudioApp, deviceUID: String) {
-        app.outputDeviceUID = deviceUID
-        Task {
-            try? await tapManager?.setOutputDevice(deviceUID, for: app)
-        }
-        persistState(for: app)
-    }
-
-    func setBoostEnabled(for app: AudioApp, enabled: Bool) {
-        app.isBoostEnabled = enabled
-        if !enabled, app.volume > 1.0 {
-            app.volume = 1.0
-        }
-        tapManager?.setVolume(app.volume, for: app)
         persistState(for: app)
     }
 
@@ -201,26 +167,6 @@ final class AudioEngine {
         let defaults = UserDefaults.standard
         defaults.set(app.volume, forKey: "nocturn.volume.\(app.bundleID)")
         defaults.set(app.isMuted, forKey: "nocturn.mute.\(app.bundleID)")
-        defaults.set(app.outputDeviceUID, forKey: "nocturn.outputDevice.\(app.bundleID)")
-
-        let payload = EQStatePayload(preset: app.eqPreset, bands: app.eqBands)
-        if let data = try? JSONEncoder().encode(payload) {
-            defaults.set(data, forKey: "nocturn.eq.\(app.bundleID)")
-        }
-
-        // Also persist richer EQ/device state through SwiftData.
-        let bundleID = app.bundleID
-        let preset = app.eqPreset
-        let bands = app.eqBands
-        let outputDeviceUID = app.outputDeviceUID
-        Task { @MainActor in
-            NocturnDataStore.upsert(
-                bundleID: bundleID,
-                preset: preset,
-                bands: bands,
-                outputDeviceUID: outputDeviceUID
-            )
-        }
     }
 
     private func restoreState(for app: AudioApp) {
@@ -229,21 +175,11 @@ final class AudioEngine {
             app.volume = defaults.float(forKey: "nocturn.volume.\(app.bundleID)")
         }
         app.isMuted = defaults.bool(forKey: "nocturn.mute.\(app.bundleID)")
-        app.outputDeviceUID = defaults.string(forKey: "nocturn.outputDevice.\(app.bundleID)")
-        if let data = defaults.data(forKey: "nocturn.eq.\(app.bundleID)"),
-           let payload = try? JSONDecoder().decode(EQStatePayload.self, from: data) {
-            app.eqPreset = payload.preset
-            app.eqBands = payload.bands
-        }
     }
 }
 
-private struct EQStatePayload: Codable {
-    let preset: EQPreset
-    let bands: [Float]
-}
-
 private struct AudioEngineKey: EnvironmentKey {
+    @MainActor
     static var defaultValue: AudioEngine = AudioEngine()
 }
 

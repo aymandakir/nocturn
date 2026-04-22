@@ -10,11 +10,7 @@ final class AudioApp: Identifiable {
     let icon: NSImage?
     var volume: Float
     var isMuted: Bool
-    var outputDeviceUID: String?
-    var eqPreset: EQPreset
-    var eqBands: [Float]
     var lastActiveDate: Date
-    var isBoostEnabled: Bool
 
     init(
         id: pid_t,
@@ -23,11 +19,7 @@ final class AudioApp: Identifiable {
         icon: NSImage?,
         volume: Float = 1.0,
         isMuted: Bool = false,
-        outputDeviceUID: String? = nil,
-        eqPreset: EQPreset = .flat,
-        eqBands: [Float] = [0, 0, 0, 0, 0],
-        lastActiveDate: Date = .now,
-        isBoostEnabled: Bool = false
+        lastActiveDate: Date = .now
     ) {
         self.id = id
         self.bundleID = bundleID
@@ -35,10 +27,6 @@ final class AudioApp: Identifiable {
         self.icon = icon
         self.volume = volume
         self.isMuted = isMuted
-        self.outputDeviceUID = outputDeviceUID
-        self.eqPreset = eqPreset
-        self.eqBands = eqBands
         self.lastActiveDate = lastActiveDate
-        self.isBoostEnabled = isBoostEnabled
     }
 }
