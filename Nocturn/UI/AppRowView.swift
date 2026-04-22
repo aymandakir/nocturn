@@ -3,7 +3,7 @@ import SwiftUI
 struct AppRowView: View {
     @Environment(\.audioEngine) private var audioEngine
     let app: AudioApp
-    private var controlsAvailable: Bool { audioEngine.tapAvailable }
+    private var controlsAvailable: Bool { app.controlAvailable }
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
@@ -24,7 +24,7 @@ struct AppRowView: View {
                     )
                     .opacity(app.isMuted ? 0.4 : 1.0)
                 } else {
-                    Text("Per-app controls unavailable on this runtime.")
+                    Text(app.controlUnavailableReason ?? "Per-app controls unavailable on this runtime.")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }

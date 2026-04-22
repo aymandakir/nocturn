@@ -36,6 +36,10 @@ final class AudioTapManager {
         return false
     }
 
+    func hasSession(for pid: pid_t) -> Bool {
+        sessions[pid] != nil
+    }
+
     deinit {
         // Best-effort: unwind sessions. Individual sessions hold CoreAudio
         // resources that must be destroyed to release the aggregate device
@@ -57,6 +61,7 @@ final class AudioTapManager {
     func startTap(for app: AudioApp) async throws {
         guard sessions[app.id] == nil else { return }
         guard #available(macOS 14.2, *) else {
+            logger.warning("Tap unsupported for PID \(app.id): macOS < 14.2")
             throw AudioError.tapUnavailable
         }
 
@@ -67,6 +72,7 @@ final class AudioTapManager {
             aggregateID = try createAggregateDevice(wrapping: tapID, pid: app.id)
         } catch {
             AudioHardwareDestroyProcessTap(tapID)
+            logger.error("Aggregate device creation failed for PID \(app.id): \(error.localizedDescription, privacy: .public)")
             throw error
         }
 
@@ -120,15 +126,23 @@ final class AudioTapManager {
 
     /// Sets linear app volume in range 0.0...1.5.
     func setVolume(_ volume: Float, for app: AudioApp) {
-        guard let session = sessions[app.id] else { return }
+        guard let session = sessions[app.id] else {
+            logger.warning("Volume apply skipped for PID \(app.id): no tap session")
+            return
+        }
         let normalized = min(max(volume, 0), 1.5)
         session.mixer.outputVolume = app.isMuted ? 0 : normalized
+        logger.debug("Applied volume \(normalized, privacy: .public) for PID \(app.id)")
     }
 
     /// Enables or disables app audio without altering the stored volume.
     func setMuted(_ muted: Bool, for app: AudioApp) {
-        guard let session = sessions[app.id] else { return }
+        guard let session = sessions[app.id] else {
+            logger.warning("Mute apply skipped for PID \(app.id): no tap session")
+            return
+        }
         session.mixer.outputVolume = muted ? 0 : min(max(app.volume, 0), 1.5)
+        logger.debug("Applied mute \(muted, privacy: .public) for PID \(app.id)")
     }
 
     private func teardown(_ session: TapSession) {

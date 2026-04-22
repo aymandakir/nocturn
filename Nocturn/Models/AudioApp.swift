@@ -11,6 +11,8 @@ final class AudioApp: Identifiable {
     var volume: Float
     var isMuted: Bool
     var lastActiveDate: Date
+    var controlAvailable: Bool
+    var controlUnavailableReason: String?
 
     init(
         id: pid_t,
@@ -19,7 +21,9 @@ final class AudioApp: Identifiable {
         icon: NSImage?,
         volume: Float = 1.0,
         isMuted: Bool = false,
-        lastActiveDate: Date = .now
+        lastActiveDate: Date = .now,
+        controlAvailable: Bool = false,
+        controlUnavailableReason: String? = nil
     ) {
         self.id = id
         self.bundleID = bundleID
@@ -28,5 +32,7 @@ final class AudioApp: Identifiable {
         self.volume = volume
         self.isMuted = isMuted
         self.lastActiveDate = lastActiveDate
+        self.controlAvailable = controlAvailable
+        self.controlUnavailableReason = controlUnavailableReason
     }
 }
