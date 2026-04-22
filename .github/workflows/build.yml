@@ -1,0 +1,88 @@
+name: Build and Release Nocturn
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 16
+        run: sudo xcode-select -s /Applications/Xcode_16.app
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Import signing certificate
+        env:
+          CERTIFICATE_P12: ${{ secrets.CERTIFICATE_P12 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
+        run: |
+          echo "$CERTIFICATE_P12" | base64 --decode > cert.p12
+          security create-keychain -p "build-keychain-password" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "build-keychain-password" build.keychain
+          security import cert.p12 -k build.keychain -P "$CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k "build-keychain-password" build.keychain
+
+      - name: Build and Archive
+        run: |
+          xcodebuild \
+            -project Nocturn.xcodeproj \
+            -scheme Nocturn \
+            -configuration Release \
+            -archivePath ${{ runner.temp }}/Nocturn.xcarchive \
+            archive
+
+      - name: Export app
+        run: |
+          xcodebuild \
+            -exportArchive \
+            -archivePath ${{ runner.temp }}/Nocturn.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath ${{ runner.temp }}/export/
+
+      - name: Create DMG
+        run: |
+          brew install create-dmg
+          create-dmg \
+            --volname "Nocturn" \
+            --background "Assets/dmg-background.png" \
+            --window-pos 200 120 \
+            --window-size 600 400 \
+            --icon-size 100 \
+            --icon "Nocturn.app" 175 190 \
+            --hide-extension "Nocturn.app" \
+            --app-drop-link 425 190 \
+            "${{ runner.temp }}/Nocturn.dmg" \
+            "${{ runner.temp }}/export/"
+
+      - name: Notarize DMG
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          xcrun notarytool submit "${{ runner.temp }}/Nocturn.dmg" \
+            --apple-id "$APPLE_ID" \
+            --password "$APPLE_APP_PASSWORD" \
+            --team-id "$APPLE_TEAM_ID" \
+            --wait
+          xcrun stapler staple "${{ runner.temp }}/Nocturn.dmg"
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ runner.temp }}/Nocturn.dmg
+          generate_release_notes: true
