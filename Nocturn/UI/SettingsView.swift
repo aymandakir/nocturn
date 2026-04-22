@@ -5,15 +5,11 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var launchAtLogin = Permissions.launchAtLoginEnabled()
-    @State private var defaultPresetRawValue = UserDefaults.standard.string(forKey: "nocturn.defaultEQPreset") ?? EQPreset.flat.rawValue
     @State private var launchError: String?
-    @State private var driverState: Permissions.DriverState = .notInstalled
-    @State private var driverError: String?
-    @State private var isWorkingOnDriver = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Settings")
+            Text("Audio Manager Settings")
                 .font(.title3.bold())
 
             Toggle("Launch at login", isOn: Binding(
@@ -29,19 +25,13 @@ struct SettingsView: View {
                 }
             ))
 
-            driverSection
+            Text("Nocturn v0.1 focuses on active app visibility and safe volume/mute control.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
 
-            Picker("Default EQ Preset", selection: Binding(
-                get: { EQPreset(rawValue: defaultPresetRawValue) ?? .flat },
-                set: {
-                    defaultPresetRawValue = $0.rawValue
-                    UserDefaults.standard.set($0.rawValue, forKey: "nocturn.defaultEQPreset")
-                }
-            )) {
-                ForEach(EQPreset.allCases, id: \.self) { preset in
-                    Text(preset.rawValue).tag(preset)
-                }
-            }
+            Text("Advanced audio processing and driver integrations are intentionally hidden in this version.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
 
             Button("Open GitHub") {
                 guard let url = URL(string: "https://github.com/aymandakir/nocturn") else { return }
@@ -67,124 +57,5 @@ struct SettingsView: View {
         }
         .padding(20)
         .frame(width: 420)
-        .onAppear { refreshDriverState() }
-    }
-
-    @ViewBuilder
-    private var driverSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text("Driver")
-                Text("Experimental")
-                    .font(.caption2.weight(.semibold))
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(Capsule().fill(Color.yellow.opacity(0.2)))
-                    .foregroundStyle(.yellow)
-                Spacer()
-                Text(driverBadgeLabel)
-                    .font(.caption.weight(.semibold))
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(Capsule().fill(driverBadgeColor.opacity(0.2)))
-                    .foregroundStyle(driverBadgeColor)
-            }
-
-            HStack {
-                Button(driverActionLabel) { performDriverAction() }
-                    .disabled(isWorkingOnDriver)
-
-                if case .installed = driverState {
-                    Button("Uninstall") { uninstallDriver() }
-                        .disabled(isWorkingOnDriver)
-                }
-                Spacer()
-                if isWorkingOnDriver {
-                    ProgressView()
-                        .controlSize(.small)
-                }
-            }
-
-            if let driverError {
-                Text(driverError)
-                    .font(.caption)
-                    .foregroundStyle(.red)
-            }
-        }
-    }
-
-    private var driverBadgeLabel: String {
-        switch driverState {
-        case .notInstalled:
-            return "Not Installed"
-        case let .installed(version):
-            return "Installed v\(version)"
-        case let .updateAvailable(installed, latest):
-            return "Update \(installed) → \(latest)"
-        }
-    }
-
-    private var driverBadgeColor: Color {
-        switch driverState {
-        case .notInstalled:
-            return .red
-        case .installed:
-            return .green
-        case .updateAvailable:
-            return .yellow
-        }
-    }
-
-    private var driverActionLabel: String {
-        switch driverState {
-        case .notInstalled:
-            return "Install Driver"
-        case .installed:
-            return "Reinstall"
-        case .updateAvailable:
-            return "Update Driver"
-        }
-    }
-
-    private func refreshDriverState() {
-        driverState = Permissions.driverState()
-    }
-
-    private func performDriverAction() {
-        isWorkingOnDriver = true
-        driverError = nil
-        Task.detached {
-            do {
-                try Permissions.installDriver()
-                await MainActor.run {
-                    refreshDriverState()
-                    isWorkingOnDriver = false
-                }
-            } catch {
-                await MainActor.run {
-                    driverError = error.localizedDescription
-                    isWorkingOnDriver = false
-                }
-            }
-        }
-    }
-
-    private func uninstallDriver() {
-        isWorkingOnDriver = true
-        driverError = nil
-        Task.detached {
-            do {
-                try Permissions.uninstallDriver()
-                await MainActor.run {
-                    refreshDriverState()
-                    isWorkingOnDriver = false
-                }
-            } catch {
-                await MainActor.run {
-                    driverError = error.localizedDescription
-                    isWorkingOnDriver = false
-                }
-            }
-        }
     }
 }

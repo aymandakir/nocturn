@@ -1,52 +1,55 @@
 # Nocturn
 
-![macOS 14+](https://img.shields.io/badge/macOS-14%2B-black?style=flat-square)
-![License GPLv2](https://img.shields.io/badge/license-GPLv2-blue?style=flat-square)
-![Build](https://github.com/aymandakir/nocturn/actions/workflows/build.yml/badge.svg)
+Nocturn is a lightweight macOS menu bar audio manager.
 
-Nocturn is a native macOS menu bar app for audio controls.  
-This repository is currently in MVP development; some features are intentionally
-best-effort or experimental.
+v0.1 focuses on one core job: show active audio apps and let you manage each
+app's volume/mute from one place when runtime support is available.
 
-## Current MVP Status (v0.1.x)
+## What Nocturn Is (v0.1)
 
-Known working app shell behavior:
+- A stable menu bar app (`LSUIElement`) with a popover interface.
+- A compact audio manager with:
+  - `System Output` section
+  - `Active Apps` list
+  - `Settings` sheet
+- Honest runtime behavior: if per-app control is unavailable, the UI says so and
+  disables controls instead of pretending it works.
 
-- Menu bar app launches (`LSUIElement`) with status item icon
-- Popover opens/closes from the status item
-- Output and input sections render device information
-- Active app list UI renders from detected CoreAudio process objects
-- Settings sheet opens and launch-at-login toggle is wired
+## What Works Today
 
-Audio controls status:
+- App launches and stays in the menu bar.
+- Popover opens/closes reliably.
+- Active app list is driven by CoreAudio process-object detection.
+- Each app row shows:
+  - app icon
+  - app name
+  - volume slider (when available)
+  - mute toggle (when available)
+- Global/system output volume slider is available.
+- Settings sheet opens and launch-at-login toggle is wired.
 
-- On macOS 14.2+ with AudioTap available, Nocturn runs a tap-based processing path
-  (volume/mute/EQ controls are best-effort and safety-first).
-- If AudioTap is unavailable (older runtime/unsupported state), app controls are
-  shown as disabled and app remains usable without crashing.
-- App does **not** fall back to listing all running apps as audio sources when
-  CoreAudio process enumeration fails.
+## Not in v0.1 Scope
+
+- EQ and effects controls
+- Advanced routing UI
+- HAL driver flow for general users
+- “SoundSource clone” feature parity
+
+These areas are intentionally hidden/disabled in the current product direction.
 
 ## Requirements
 
 - macOS 14.0 (Sonoma) or later
-- macOS 14.2+ for AudioTap processing path
+- macOS 14.2+ for current per-app AudioTap control path
 - Xcode 16+ to build from source
 
 ## Installation
 
-Download the latest release from the
-[Releases page](https://github.com/aymandakir/nocturn/releases).
-
-Homebrew cask (coming soon):
-
-```bash
-brew install --cask nocturn
-```
+Use local builds/pre-release artifacts for now.
 
 ## Building from Source
 
-Nocturn's Xcode project is generated from [`project.yml`](project.yml) using
+Nocturn's Xcode project is generated from `project.yml` using
 [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 
 ```bash
@@ -59,21 +62,14 @@ xcodebuild -project Nocturn.xcodeproj -scheme Nocturn -configuration Debug build
 open Nocturn.xcodeproj
 ```
 
-Build and run the `Nocturn` scheme. The app appears in your menu bar (it has
-no Dock icon — `LSUIElement` is `YES`).
+Build and run the `Nocturn` scheme. The app appears in your menu bar with no
+Dock icon.
 
-## Experimental / Planned
+## Planned Later (Post-v0.1)
 
-- CoreAudio HAL driver target (`NocturnDriver`) is currently experimental.
-- Driver install/uninstall UI is present but should be treated as non-final.
-- Strict per-app isolation guarantees are planned to be hardened in future
-  driver-backed iterations.
-
-## Notes on AudioTap in Current MVP
-
-- Current tap path prioritizes safe behavior (avoid duplicate audio layering).
-- Controls are best-effort post-processing in MVP, not a final claim of perfect
-  per-app isolation in all cases.
+- Harder guarantees for per-app control across more runtime combinations
+- Optional advanced controls behind clear feature gates
+- Production-ready packaging/signing/release pipeline
 
 ## Privacy
 
@@ -85,7 +81,3 @@ your device.
 
 GPLv2. The CoreAudio driver component is based on
 [BackgroundMusic](https://github.com/kyleneideck/BackgroundMusic) (GPLv2).
-
-## Acknowledgments
-
-Inspired by [SoundSource](https://rogueamoeba.com/soundsource/) by Rogue Amoeba.

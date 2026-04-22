@@ -4,7 +4,6 @@ import SwiftUI
 struct MenuBarView: View {
     @Environment(\.audioEngine) private var audioEngine
     @State private var showSettings = false
-    @State private var showInputSection = false
     @State private var pulse = false
 
     var body: some View {
@@ -14,7 +13,6 @@ struct MenuBarView: View {
                 header
                 outputSection
                 appsSection
-                inputSection
             }
             .padding(12)
         }
@@ -31,7 +29,7 @@ struct MenuBarView: View {
 
     private var header: some View {
         HStack {
-            Text("Nocturn")
+            Text("Nocturn Audio Manager")
                 .font(.headline)
             Spacer()
             Button {
@@ -45,7 +43,7 @@ struct MenuBarView: View {
 
     private var outputSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("OUTPUT")
+            Text("SYSTEM OUTPUT")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
@@ -77,7 +75,7 @@ struct MenuBarView: View {
             HStack(spacing: 8) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundStyle(.yellow)
-                Text("AudioTap controls are unavailable on this macOS/runtime.")
+                Text("Per-app volume control is unavailable on this macOS/runtime.")
                     .font(.caption)
                 Spacer()
             }
@@ -105,7 +103,7 @@ struct MenuBarView: View {
 
     private var appsSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("APPS")
+            Text("ACTIVE APPS")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
@@ -122,44 +120,8 @@ struct MenuBarView: View {
                 .padding(.vertical, 24)
             } else {
                 ForEach(audioEngine.audioApps, id: \.id) { app in
-                    AppRowView(
-                        app: app,
-                        devices: audioEngine.deviceManager.outputDevices,
-                        defaultDevice: audioEngine.deviceManager.defaultOutput
-                    )
+                    AppRowView(app: app)
                 }
-            }
-        }
-    }
-
-    private var inputSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Button {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    showInputSection.toggle()
-                }
-            } label: {
-                HStack {
-                    Text("INPUT")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    Image(systemName: showInputSection ? "chevron.down" : "chevron.right")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .buttonStyle(.plain)
-
-            if showInputSection, let input = audioEngine.deviceManager.defaultInput {
-                HStack(alignment: .center) {
-                    DeviceIconView(type: input.type)
-                    Text(input.name)
-                        .font(.subheadline)
-                    Spacer()
-                }
-                ProgressView(value: 0.35)
-                    .progressViewStyle(.linear)
             }
         }
     }
