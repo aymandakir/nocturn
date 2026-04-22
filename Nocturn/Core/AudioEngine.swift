@@ -154,6 +154,7 @@ final class AudioEngine {
 
     private func detectActiveAudioPIDs() -> Set<pid_t> {
         var pids = Set<pid_t>()
+        var processEnumerationFailed = false
 
         do {
             let processObjects: [AudioObjectID] = try getPropertyDataArray(
@@ -169,13 +170,14 @@ final class AudioEngine {
                 }
             }
         } catch {
+            processEnumerationFailed = true
             logger.error("Process audio list query failed: \(error.localizedDescription, privacy: .public)")
         }
 
-        if pids.isEmpty {
-            for app in NSWorkspace.shared.runningApplications where app.processIdentifier > 0 {
-                pids.insert(app.processIdentifier)
-            }
+        if processEnumerationFailed {
+            // Safety behavior: never label all running processes as "playing audio".
+            // Returning no entries is more honest than false positives.
+            return []
         }
 
         return pids

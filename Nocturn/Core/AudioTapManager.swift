@@ -11,6 +11,12 @@ import SwiftUI
 /// - a process tap (`AudioHardwareCreateProcessTap`)
 /// - a private aggregate device containing that tap as a sub-tap
 /// - an `AVAudioEngine` subgraph: aggregate input → EQ → mixer → output device
+///
+/// SAFETY NOTE:
+/// v0.1.0 intentionally prioritizes "no duplicate audio" over perfect per-app
+/// isolation. We request the source process to be muted while tapped and treat
+/// this path as best-effort post-processing with per-session controls.
+/// TODO(v0.2.0/HAL): move hard per-app isolation guarantees to the driver path.
 @Observable
 final class AudioTapManager {
     struct TapSession {
@@ -151,6 +157,7 @@ final class AudioTapManager {
     /// Routes app output to a specific output device UID.
     func setOutputDevice(_ deviceUID: String, for app: AudioApp) async throws {
         guard var session = sessions[app.id] else { return }
+        // TODO(v0.2.0/HAL): guarantee strict per-app route isolation.
         try applyOutputDevice(deviceUID, to: &session)
         sessions[app.id] = session
     }
@@ -190,7 +197,9 @@ final class AudioTapManager {
     private func createProcessTap(for processObjectID: AudioObjectID) throws -> AudioObjectID {
         let description = CATapDescription(stereoMixdownOfProcesses: [processObjectID])
         description.uuid = UUID()
-        description.muteBehavior = .unmuted
+        // Avoid layering original + processed signal. This mutes the source app
+        // while Nocturn is rendering the tapped stream.
+        description.muteBehavior = .muted
 
         var tapID = AudioObjectID(kAudioObjectUnknown)
         let status = AudioHardwareCreateProcessTap(description, &tapID)

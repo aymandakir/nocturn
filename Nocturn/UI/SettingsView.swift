@@ -75,6 +75,12 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("Driver")
+                Text("Experimental")
+                    .font(.caption2.weight(.semibold))
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(Capsule().fill(Color.yellow.opacity(0.2)))
+                    .foregroundStyle(.yellow)
                 Spacer()
                 Text(driverBadgeLabel)
                     .font(.caption.weight(.semibold))
