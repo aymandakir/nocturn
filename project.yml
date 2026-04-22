@@ -1,0 +1,63 @@
+name: Nocturn
+options:
+  minimumXcodeGenVersion: 2.38.0
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: 5.10
+    MACOSX_DEPLOYMENT_TARGET: 14.0
+    PRODUCT_BUNDLE_IDENTIFIER: com.aymandakir.nocturn
+    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: 0.1.0
+    CODE_SIGN_STYLE: Automatic
+    CLANG_WARN_DOCUMENTATION_COMMENTS: YES
+    SWIFT_STRICT_CONCURRENCY: complete
+
+targets:
+  Nocturn:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: Nocturn
+        excludes:
+          - "**/*.plist"
+          - "**/*.entitlements"
+    info:
+      path: Nocturn/Info.plist
+    entitlements:
+      path: Nocturn/Nocturn.entitlements
+    settings:
+      base:
+        PRODUCT_NAME: Nocturn
+        PRODUCT_BUNDLE_IDENTIFIER: com.aymandakir.nocturn
+        GENERATE_INFOPLIST_FILE: NO
+        ENABLE_HARDENED_RUNTIME: YES
+
+  NocturnTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: NocturnTests
+    dependencies:
+      - target: Nocturn
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.aymandakir.nocturn.tests
+        GENERATE_INFOPLIST_FILE: YES
+
+schemes:
+  Nocturn:
+    shared: true
+    build:
+      targets:
+        Nocturn: all
+        NocturnTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - NocturnTests
