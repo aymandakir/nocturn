@@ -19,6 +19,7 @@ struct MenuBarView: View {
         .background(.ultraThinMaterial)
         .sheet(isPresented: $showSettings) {
             SettingsView()
+                .environment(\.audioEngine, audioEngine)
         }
         .onAppear {
             withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {

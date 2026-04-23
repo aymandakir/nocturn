@@ -24,9 +24,16 @@ struct AppRowView: View {
                     )
                     .opacity(app.isMuted ? 0.4 : 1.0)
                 } else {
-                    Text(app.controlUnavailableReason ?? "Per-app controls unavailable on this runtime.")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                    VStack(alignment: .leading, spacing: 2) {
+                        if let step = app.controlFailureStep {
+                            Text("Failed step: \(step)")
+                                .font(.caption2.monospaced())
+                                .foregroundStyle(.secondary)
+                        }
+                        Text(app.controlUnavailableReason ?? "Per-app controls unavailable on this runtime.")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
 

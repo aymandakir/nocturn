@@ -16,6 +16,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let shortcutDefaultsKey = "nocturn.globalShortcut"
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        UserDefaults.standard.set(true, forKey: "nocturn.diagnosticsMode")
+        logger.info("Diagnostics mode forced on for audio routing investigation")
         setupStatusItem()
         setupPopover()
         installGlobalShortcut()

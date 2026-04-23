@@ -13,6 +13,7 @@ final class AudioApp: Identifiable {
     var lastActiveDate: Date
     var controlAvailable: Bool
     var controlUnavailableReason: String?
+    var controlFailureStep: String?
 
     init(
         id: pid_t,
@@ -23,7 +24,8 @@ final class AudioApp: Identifiable {
         isMuted: Bool = false,
         lastActiveDate: Date = .now,
         controlAvailable: Bool = false,
-        controlUnavailableReason: String? = nil
+        controlUnavailableReason: String? = nil,
+        controlFailureStep: String? = nil
     ) {
         self.id = id
         self.bundleID = bundleID
@@ -34,5 +36,6 @@ final class AudioApp: Identifiable {
         self.lastActiveDate = lastActiveDate
         self.controlAvailable = controlAvailable
         self.controlUnavailableReason = controlUnavailableReason
+        self.controlFailureStep = controlFailureStep
     }
 }

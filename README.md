@@ -13,7 +13,7 @@ app's volume/mute from one place when runtime support is available.
   - `Active Apps` list
   - `Settings` sheet
 - Honest runtime behavior: if per-app control is unavailable, the UI says so and
-  disables controls instead of pretending it works.
+disables controls instead of pretending it works.
 
 ## What Works Today
 

@@ -10,6 +10,8 @@ final class AudioEngine {
     var tapAvailable: Bool = true
     var microphonePermissionDenied: Bool = false
 
+    private static var didLogHostPIDAudioExclusion = false
+
     let deviceManager: DeviceManager
     private var tapManager: AudioTapManager?
     private let logger = AppLogger.audio
@@ -22,8 +24,11 @@ final class AudioEngine {
     init(deviceManager: DeviceManager = DeviceManager(), tapManager: AudioTapManager? = nil) {
         self.deviceManager = deviceManager
         self.tapManager = tapManager
-        self.tapAvailable = tapManager?.isTapAvailable ?? false
-        logger.info("AudioEngine initialized. Tap runtime available: \(self.tapAvailable, privacy: .public)")
+        // Never derive tap support from `tapManager == nil` (orphan engines / timing).
+        self.tapAvailable = AudioTapManager.queryTapRuntimeCapability()
+        logger.info(
+            "AudioEngine initialized. tapAvailable=\(self.tapAvailable, privacy: .public) (source: shared AudioTapManager.queryTapRuntimeCapability cache; tapManager wired=\(tapManager != nil, privacy: .public))"
+        )
         startPolling()
         observeTerminations()
     }
@@ -37,7 +42,15 @@ final class AudioEngine {
 
     func attachTapManager(_ manager: AudioTapManager) {
         tapManager = manager
-        tapAvailable = manager.isTapAvailable
+        let capability = AudioTapManager.queryTapRuntimeCapability()
+        if tapAvailable != capability {
+            logger.warning("AudioEngine attachTapManager: reconciling tapAvailable \(self.tapAvailable) -> \(capability)")
+            tapAvailable = capability
+        } else {
+            logger.info(
+                "AudioEngine attachTapManager: manager attached; tapAvailable=\(self.tapAvailable, privacy: .public) unchanged (shared runtime capability cache)"
+            )
+        }
     }
 
     func refreshNow() async {
@@ -104,9 +117,20 @@ final class AudioEngine {
         for pid in activePIDs {
             if let existing = existingByPID.removeValue(forKey: pid) {
                 existing.lastActiveDate = now
-                existing.controlAvailable = tapManager?.hasSession(for: existing.id) ?? false
-                if !existing.controlAvailable, tapAvailable {
-                    existing.controlUnavailableReason = "Tap session not active."
+                if let tm = tapManager {
+                    let has = tm.hasSession(for: existing.id)
+                    existing.controlAvailable = has
+                    if has {
+                        existing.controlFailureStep = nil
+                        existing.controlUnavailableReason = nil
+                    } else if tapAvailable {
+                        existing.controlFailureStep = AudioTapManager.TapStartupStep.startTapSession.rawValue
+                        existing.controlUnavailableReason = "Tap session not active."
+                    }
+                } else {
+                    logger.debug(
+                        "refreshActiveApps: tapManager nil; preserving control flags for PID \(existing.id, privacy: .public) (controlAvailable=\(existing.controlAvailable, privacy: .public))"
+                    )
                 }
                 updatedApps.append(existing)
             } else if let newApp = makeAudioApp(for: pid) {
@@ -114,18 +138,35 @@ final class AudioEngine {
                 updatedApps.append(newApp)
                 if !tapAvailable {
                     newApp.controlAvailable = false
+                    newApp.controlFailureStep = AudioTapManager.TapStartupStep.startTapSession.rawValue
                     newApp.controlUnavailableReason = "AudioTap unsupported on this macOS runtime."
                     logger.warning("Control unavailable for PID \(pid): \(newApp.controlUnavailableReason ?? "", privacy: .public)")
                     continue
                 }
+                guard let tm = tapManager else {
+                    newApp.controlAvailable = false
+                    newApp.controlFailureStep = AudioTapManager.TapStartupStep.startTapSession.rawValue
+                    newApp.controlUnavailableReason = "Tap manager not wired to this AudioEngine instance."
+                    logger.warning(
+                        "refreshActiveApps: tapManager nil; cannot start tap for PID \(pid, privacy: .public) (use the shared app AudioEngine, not the environment default)"
+                    )
+                    continue
+                }
                 do {
-                    try await tapManager?.startTap(for: newApp)
-                    newApp.controlAvailable = tapManager?.hasSession(for: newApp.id) ?? false
+                    try await tm.startTap(for: newApp)
+                    newApp.controlAvailable = tm.hasSession(for: newApp.id)
+                    newApp.controlFailureStep = newApp.controlAvailable ? nil : AudioTapManager.TapStartupStep.startTapSession.rawValue
                     newApp.controlUnavailableReason = newApp.controlAvailable ? nil : "Tap session failed to initialize."
                     logger.info("Tap session status for PID \(pid): controlAvailable=\(newApp.controlAvailable, privacy: .public)")
                 } catch {
                     newApp.controlAvailable = false
-                    newApp.controlUnavailableReason = "Tap start failed: \(error.localizedDescription)"
+                    if let failure = error as? AudioTapManager.TapStartupFailure {
+                        newApp.controlFailureStep = failure.step.rawValue
+                        newApp.controlUnavailableReason = failure.detail
+                    } else {
+                        newApp.controlFailureStep = AudioTapManager.TapStartupStep.startTapSession.rawValue
+                        newApp.controlUnavailableReason = error.localizedDescription
+                    }
                     logger.error("Failed to start tap for PID \(pid): \(error.localizedDescription, privacy: .public)")
                 }
             }
@@ -153,6 +194,7 @@ final class AudioEngine {
     private func detectActiveAudioPIDs() -> Set<pid_t> {
         var pids = Set<pid_t>()
         var processEnumerationFailed = false
+        let hostPID = ProcessInfo.processInfo.processIdentifier
 
         do {
             let processObjects: [AudioObjectID] = try getPropertyDataArray(
@@ -164,6 +206,17 @@ final class AudioEngine {
                 let pid: pid_t = (try? getPropertyData(processObject, address: CoreAudioProperty.processPID, defaultValue: pid_t(0))) ?? 0
                 let running: UInt32 = (try? getPropertyData(processObject, address: CoreAudioProperty.processIsRunning, defaultValue: UInt32(0))) ?? 0
                 if pid > 0, running != 0 {
+                    if pid == hostPID {
+                        if !Self.didLogHostPIDAudioExclusion {
+                            Self.didLogHostPIDAudioExclusion = true
+                            logger.info(
+                                "Active audio detection: excluded Nocturn host PID \(hostPID, privacy: .public) (never treat self as an audio app to tap)"
+                            )
+                        } else {
+                            logger.debug("Active audio detection: excluded host PID \(hostPID, privacy: .public) (repeat)")
+                        }
+                        continue
+                    }
                     pids.insert(pid)
                 }
             }
@@ -184,7 +237,17 @@ final class AudioEngine {
     }
 
     private func makeAudioApp(for pid: pid_t) -> AudioApp? {
+        guard pid != ProcessInfo.processInfo.processIdentifier else {
+            logger.debug("makeAudioApp: skipped host PID \(pid, privacy: .public)")
+            return nil
+        }
         guard let running = NSRunningApplication(processIdentifier: pid) else {
+            return nil
+        }
+        if running.bundleIdentifier == Bundle.main.bundleIdentifier {
+            logger.debug(
+                "makeAudioApp: skipped same bundle as host \(running.bundleIdentifier ?? "", privacy: .public) PID \(pid, privacy: .public)"
+            )
             return nil
         }
         let bundleID = running.bundleIdentifier ?? "pid.\(pid)"
